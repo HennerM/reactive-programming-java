@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/ReactiveProgramming.iml" filepath="$PROJECT_DIR$/ReactiveProgramming.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ReactiveProgramming.iml" filepath="$PROJECT_DIR$/.idea/modules/ReactiveProgramming.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ReactiveProgramming_main.iml" filepath="$PROJECT_DIR$/.idea/modules/ReactiveProgramming_main.iml" group="ReactiveProgramming" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/ReactiveProgramming_test.iml" filepath="$PROJECT_DIR$/.idea/modules/ReactiveProgramming_test.iml" group="ReactiveProgramming" />
     </modules>
   </component>
 </project>
