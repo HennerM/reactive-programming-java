@@ -19,7 +19,8 @@ public class SupplierRepository {
 
     private JdbcTemplate jdbcTemplate;
 
-    private RowMapper<Supplier> supplierMapper = ((rs, rowNum) -> new Supplier(rs.getString("name"), rs.getString("inventoryApi"));
+    private RowMapper<Supplier> supplierMapper = ((rs, rowNum) ->
+            new Supplier(rs.getInt("id"), rs.getString("name"), rs.getString("inventoryApi")));
 
 
     @Autowired
@@ -28,8 +29,8 @@ public class SupplierRepository {
     }
 
     public List<Supplier> findForProduct(String productName) {
-        return jdbcTemplate.query("SELECT Supplier.name, inventoryApi FROM Supplier " +
+        return jdbcTemplate.query("SELECT Supplier.id, Supplier.name, inventoryApi FROM Supplier " +
                             "INNER JOIN Product ON Product.supplierId = Supplier.id " +
-                            "WHERE Product.name LIKE '%?%'", new Object[]{ productName}, supplierMapper);
+                            "WHERE Product.name LIKE ?", new Object[]{ "%" + productName + "%"}, supplierMapper);
     }
 }
