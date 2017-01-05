@@ -17,9 +17,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-/**
- * Created by markush on 1/4/17.
- */
 
 @RestController
 public class OrderController {
@@ -32,15 +29,14 @@ public class OrderController {
     }
 
     @RequestMapping(value = "/", method = RequestMethod.POST)
-    public ResponseEntity<List<Supplier>> get(@RequestBody OrderRequest orderRequest) {
-
+    public ResponseEntity<List<InventoryResponse>> get(@RequestBody OrderRequest orderRequest) {
+        System.out.println("OrderController.get");
         Observable<OrderRequestItem> orderRequests = Observable.fromIterable(orderRequest.getItems());
         Observable<InventoryResponse> inventoryRespones = orderRequests.flatMap(orderRequestItem -> {
             return inventoryChecker.checkSupplierInStock(orderRequestItem);
-        });
+        }).filter(inventoryResponse -> inventoryResponse.isAvailable());
 
-        return null;
-
+        return new ResponseEntity<>(inventoryRespones.toList().blockingGet(), HttpStatus.OK);
     }
 
 }

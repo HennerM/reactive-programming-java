@@ -1,8 +1,8 @@
 INSERT INTO Supplier (name, inventoryApi)
-VALUES ('Acme', 'http://localhost:9000/acme/inventory');
+VALUES ('Acme', 'http://localhost:8080/acme/');
 
 INSERT INTO Supplier (name, inventoryApi)
-VALUES ('Hofwirt', 'http://localhost:9000/hofwirt/inventory');
+VALUES ('Hofwirt', 'http://localhost:8080/hofwirt/');
 
 INSERT INTO Product (name, supplierId)
 VALUES ('Schnitzel', 1);
