@@ -29,13 +29,11 @@ public class InventoryChecker {
     public Observable<InventoryResponse> checkSupplierInStock(OrderRequestItem orderRequestItem) {
         List<Supplier> suppliers = this.supplierRepository.findForProduct(orderRequestItem.getProduct());
         return Observable.fromIterable(suppliers)
-                .observeOn(Schedulers.io())
                 .flatMap(supplier -> checkInventoryFor(orderRequestItem, supplier).toObservable());
     }
 
     private Single<InventoryResponse> checkInventoryFor(OrderRequestItem orderRequestItem, Supplier supplier) {
         InventoryResponse inventoryResponse = new InventoryResponse(supplier, orderRequestItem, false);
-
         SupplierService supplierService = buildSupplierService(supplier.getInventoryApi());
         Single<Boolean> availableObservable = productIsAvailable(supplierService.getInventory(), orderRequestItem);
 

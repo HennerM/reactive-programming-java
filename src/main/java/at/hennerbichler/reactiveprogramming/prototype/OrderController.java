@@ -7,6 +7,7 @@ import at.hennerbichler.reactiveprogramming.prototype.domain.OrderRequestItem;
 import at.hennerbichler.reactiveprogramming.prototype.domain.Supplier;
 import at.hennerbichler.reactiveprogramming.prototype.service.InventoryChecker;
 import io.reactivex.Observable;
+import io.reactivex.schedulers.Schedulers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,8 +31,7 @@ public class OrderController {
 
     @RequestMapping(value = "/", method = RequestMethod.POST)
     public ResponseEntity<List<InventoryResponse>> get(@RequestBody OrderRequest orderRequest) {
-        System.out.println("OrderController.get");
-        Observable<OrderRequestItem> orderRequests = Observable.fromIterable(orderRequest.getItems());
+        Observable<OrderRequestItem> orderRequests = Observable.fromIterable(orderRequest.getItems()).observeOn(Schedulers.io());
         Observable<InventoryResponse> inventoryRespones = orderRequests.flatMap(orderRequestItem -> {
             return inventoryChecker.checkSupplierInStock(orderRequestItem);
         }).filter(inventoryResponse -> inventoryResponse.isAvailable());
