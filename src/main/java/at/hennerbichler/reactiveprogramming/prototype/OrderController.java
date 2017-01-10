@@ -1,10 +1,7 @@
 package at.hennerbichler.reactiveprogramming.prototype;
 
 import at.hennerbichler.reactiveprogramming.prototype.dal.SupplierRepository;
-import at.hennerbichler.reactiveprogramming.prototype.domain.InventoryResponse;
-import at.hennerbichler.reactiveprogramming.prototype.domain.OrderRequest;
-import at.hennerbichler.reactiveprogramming.prototype.domain.OrderRequestItem;
-import at.hennerbichler.reactiveprogramming.prototype.domain.Supplier;
+import at.hennerbichler.reactiveprogramming.prototype.domain.*;
 import at.hennerbichler.reactiveprogramming.prototype.service.InventoryChecker;
 import io.reactivex.Observable;
 import io.reactivex.schedulers.Schedulers;
@@ -15,8 +12,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.async.DeferredResult;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 
 @RestController
@@ -30,13 +30,13 @@ public class OrderController {
     }
 
     @RequestMapping(value = "/", method = RequestMethod.POST)
-    public ResponseEntity<List<InventoryResponse>> get(@RequestBody OrderRequest orderRequest) {
+    public DeferredResult<ResponseEntity<List<InventoryResponse>>> get(@RequestBody OrderRequest orderRequest) {
         Observable<OrderRequestItem> orderRequests = Observable.fromIterable(orderRequest.getItems()).observeOn(Schedulers.io());
         Observable<InventoryResponse> inventoryRespones = orderRequests.flatMap(orderRequestItem -> {
             return inventoryChecker.checkSupplierInStock(orderRequestItem);
         }).filter(inventoryResponse -> inventoryResponse.isAvailable());
 
-        return new ResponseEntity<>(inventoryRespones.toList().blockingGet(), HttpStatus.OK);
+        return new DeferredResultAdapter<>(inventoryRespones.toList().map(value -> new ResponseEntity<>(value, HttpStatus.OK)));
     }
 
 }
