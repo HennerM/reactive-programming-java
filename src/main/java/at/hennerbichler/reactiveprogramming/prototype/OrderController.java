@@ -33,7 +33,7 @@ public class OrderController {
     public DeferredResult<ResponseEntity<List<InventoryResponse>>> get(@RequestBody OrderRequest orderRequest) {
         Observable<OrderRequestItem> orderRequests = Observable.fromIterable(orderRequest.getItems()).observeOn(Schedulers.io());
         Observable<InventoryResponse> inventoryRespones = orderRequests.flatMap(orderRequestItem -> {
-            return inventoryChecker.checkSupplierInStock(orderRequestItem);
+            return inventoryChecker.checkSupplierInStock(orderRequestItem).observeOn(Schedulers.io());
         }).filter(inventoryResponse -> inventoryResponse.isAvailable());
 
         return new DeferredResultAdapter<>(inventoryRespones.toList().map(value -> new ResponseEntity<>(value, HttpStatus.OK)));

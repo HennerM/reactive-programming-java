@@ -15,6 +15,7 @@ import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
 import java.util.List;
+import java.util.function.Predicate;
 
 @Service
 public class InventoryChecker {
@@ -27,15 +28,18 @@ public class InventoryChecker {
     }
 
     public Observable<InventoryResponse> checkSupplierInStock(OrderRequestItem orderRequestItem) {
-        List<Supplier> suppliers = this.supplierRepository.findForProduct(orderRequestItem.getProduct());
-        return Observable.fromIterable(suppliers)
+        Observable<Supplier> suppliers = this.supplierRepository.findForProduct(orderRequestItem.getProduct());
+        Single<OrderRequestItem> single = Single.just(orderRequestItem);
+        return suppliers
                 .flatMap(supplier -> checkInventoryFor(orderRequestItem, supplier).toObservable());
     }
 
     private Single<InventoryResponse> checkInventoryFor(OrderRequestItem orderRequestItem, Supplier supplier) {
         InventoryResponse inventoryResponse = new InventoryResponse(supplier, orderRequestItem, false);
+
         SupplierService supplierService = buildSupplierService(supplier.getInventoryApi());
-        Single<Boolean> availableObservable = productIsAvailable(supplierService.getInventory(), orderRequestItem);
+
+        Single<Boolean> availableObservable = productIsAvailable(supplierService.getInventory().subscribeOn(Schedulers.io()), orderRequestItem);
 
         return Single.zip(Single.just(inventoryResponse), availableObservable, (invResponse, available) -> {
             return new InventoryResponse(invResponse.getSupplier(), invResponse.getOrderRequestItem(), available);

@@ -16,6 +16,11 @@ public class InventoryController {
     @RequestMapping(value = "/{supplierName}/inventory", method = RequestMethod.GET)
     public ResponseEntity<Inventory[]> get(@PathVariable String supplierName) {
         Inventory[] result;
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
         switch (supplierName) {
             case "acme":
                 result = new Inventory[]{new Inventory("Schnitzel", 2), new Inventory("Kebap", 1)};

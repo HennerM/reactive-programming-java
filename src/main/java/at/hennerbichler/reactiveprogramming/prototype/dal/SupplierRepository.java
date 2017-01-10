@@ -1,6 +1,8 @@
 package at.hennerbichler.reactiveprogramming.prototype.dal;
 
+import at.hennerbichler.reactiveprogramming.prototype.JdbcObservableTemplate;
 import at.hennerbichler.reactiveprogramming.prototype.domain.Supplier;
+import io.reactivex.Observable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -17,19 +19,19 @@ import java.util.List;
 public class SupplierRepository {
 
 
-    private JdbcTemplate jdbcTemplate;
+    private JdbcObservableTemplate jdbcTemplate;
 
     private RowMapper<Supplier> supplierMapper = ((rs, rowNum) ->
             new Supplier(rs.getInt("id"), rs.getString("name"), rs.getString("inventoryApi")));
 
 
     @Autowired
-    public SupplierRepository(JdbcTemplate jdbcTemplate) {
+    public SupplierRepository(JdbcObservableTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public List<Supplier> findForProduct(String productName) {
-        return jdbcTemplate.query("SELECT Supplier.id, Supplier.name, inventoryApi FROM Supplier " +
+    public Observable<Supplier> findForProduct(String productName) {
+        return jdbcTemplate.queryForObservable("SELECT Supplier.id, Supplier.name, inventoryApi FROM Supplier " +
                             "INNER JOIN Product ON Product.supplierId = Supplier.id " +
                             "WHERE Product.name LIKE ?", new Object[]{ "%" + productName + "%"}, supplierMapper);
     }
