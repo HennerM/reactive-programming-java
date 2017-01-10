@@ -46,7 +46,6 @@ public class JdbcObservableTemplate extends JdbcTemplate {
                 emitter.onError(e);
             }
         }
-
      }
 
     public <T> Observable<T> queryForObservable(String sql, Object[] args, RowMapper<T> rowMapper) throws DataAccessException {
