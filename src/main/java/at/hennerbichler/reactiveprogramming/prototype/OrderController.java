@@ -2,6 +2,7 @@ package at.hennerbichler.reactiveprogramming.prototype;
 
 import at.hennerbichler.reactiveprogramming.prototype.dal.SupplierRepository;
 import at.hennerbichler.reactiveprogramming.prototype.domain.*;
+import at.hennerbichler.reactiveprogramming.prototype.service.DeliveryService;
 import at.hennerbichler.reactiveprogramming.prototype.service.InventoryChecker;
 import io.reactivex.Observable;
 import io.reactivex.schedulers.Schedulers;
@@ -24,19 +25,24 @@ public class OrderController {
 
     private InventoryChecker inventoryChecker;
 
+    private DeliveryService deliveryService;
+
     @Autowired
-    public OrderController(InventoryChecker inventoryChecker) {
+    public OrderController(InventoryChecker inventoryChecker, DeliveryService deliveryService) {
         this.inventoryChecker = inventoryChecker;
+        this.deliveryService = deliveryService;
     }
 
+
+
     @RequestMapping(value = "/", method = RequestMethod.POST)
-    public DeferredResult<ResponseEntity<List<InventoryResponse>>> get(@RequestBody OrderRequest orderRequest) {
+    public DeferredResult<ResponseEntity<List<DeliveryOrder>>> get(@RequestBody OrderRequest orderRequest) {
         Observable<OrderRequestItem> orderRequests = Observable.fromIterable(orderRequest.getItems()).observeOn(Schedulers.io());
         Observable<InventoryResponse> inventoryResponses = orderRequests.flatMap(orderRequestItem -> {
-            return inventoryChecker.checkSupplierInStock(orderRequestItem).observeOn(Schedulers.io());
+            return inventoryChecker.checkSupplierInStock(orderRequestItem);
         }).filter(InventoryResponse::isAvailable);
-
-        return new DeferredResultAdapter<>(inventoryResponses.toList().map(value -> new ResponseEntity<>(value, HttpStatus.OK)));
+        Observable<DeliveryOrder> deliveryOrders = deliveryService.requestDelivery(inventoryResponses);
+        return new DeferredResultAdapter<>(deliveryOrders.toList().map(value -> new ResponseEntity<>(value, HttpStatus.OK)));
     }
 
 }

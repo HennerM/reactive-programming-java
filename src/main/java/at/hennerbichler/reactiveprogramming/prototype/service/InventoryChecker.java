@@ -8,7 +8,6 @@ import at.hennerbichler.reactiveprogramming.prototype.domain.Supplier;
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import io.reactivex.Observable;
 import io.reactivex.Single;
-import io.reactivex.functions.BiFunction;
 import io.reactivex.schedulers.Schedulers;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.Pair;
@@ -17,10 +16,7 @@ import org.springframework.stereotype.Service;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.function.Predicate;
 
 @Service
 public class InventoryChecker {
@@ -45,7 +41,7 @@ public class InventoryChecker {
     private Single<InventoryResponse> checkInventoryFor(OrderRequestItem orderRequestItem, Supplier supplier) {
         InventoryResponse inventoryResponse = new InventoryResponse(supplier, orderRequestItem, false);
 
-        SupplierService supplierService = buildSupplierService(supplier.getInventoryApi());
+        SupplierRestService supplierService = buildSupplierService(supplier.getInventoryApi());
         Single<Boolean> availableObservable = productIsAvailable(supplierService.getInventory().subscribeOn(Schedulers.io()), orderRequestItem);
 
         return Single.zip(Single.just(inventoryResponse), availableObservable, (invResponse, available) -> {
@@ -65,13 +61,13 @@ public class InventoryChecker {
                 .any(InventoryChecker::productInStock);
     }
 
-    private SupplierService buildSupplierService(String inventoryApi) {
+    private SupplierRestService buildSupplierService(String inventoryApi) {
         Retrofit.Builder retrofitBuilder = new Retrofit.Builder();
         Retrofit retrofit = retrofitBuilder.baseUrl(inventoryApi)
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .addConverterFactory(JacksonConverterFactory.create())
                 .build();
-        return retrofit.create(SupplierService.class);
+        return retrofit.create(SupplierRestService.class);
     }
 
 

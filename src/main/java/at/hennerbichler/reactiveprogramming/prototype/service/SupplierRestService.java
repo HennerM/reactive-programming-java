@@ -7,7 +7,7 @@ import retrofit2.http.Url;
 
 import java.util.List;
 
-public interface SupplierService {
+public interface SupplierRestService {
 
     @GET("inventory")
     Observable<List<Inventory>> getInventory();
