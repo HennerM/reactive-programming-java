@@ -1,4 +1,4 @@
-package at.hennerbichler.reactiveprogramming;
+package at.hennerbichler.reactiveprogramming.examples;
 
 import io.reactivex.Observable;
 

@@ -1,4 +1,4 @@
-package at.hennerbichler.reactiveprogramming;
+package at.hennerbichler.reactiveprogramming.examples;
 
 import java.util.Arrays;
 import java.util.stream.Stream;

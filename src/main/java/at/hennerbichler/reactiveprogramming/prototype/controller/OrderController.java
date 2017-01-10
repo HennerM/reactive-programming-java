@@ -1,5 +1,6 @@
-package at.hennerbichler.reactiveprogramming.prototype;
+package at.hennerbichler.reactiveprogramming.prototype.controller;
 
+import at.hennerbichler.reactiveprogramming.prototype.DeferredResultAdapter;
 import at.hennerbichler.reactiveprogramming.prototype.dal.SupplierRepository;
 import at.hennerbichler.reactiveprogramming.prototype.domain.*;
 import at.hennerbichler.reactiveprogramming.prototype.service.DeliveryService;

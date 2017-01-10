@@ -1,4 +1,4 @@
-package at.hennerbichler.reactiveprogramming;
+package at.hennerbichler.reactiveprogramming.examples;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;

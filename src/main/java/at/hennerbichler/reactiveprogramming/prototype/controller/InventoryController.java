@@ -1,4 +1,4 @@
-package at.hennerbichler.reactiveprogramming.prototype;
+package at.hennerbichler.reactiveprogramming.prototype.controller;
 
 import at.hennerbichler.reactiveprogramming.prototype.domain.Inventory;
 import org.springframework.http.HttpStatus;
