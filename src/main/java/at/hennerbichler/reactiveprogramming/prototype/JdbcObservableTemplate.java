@@ -19,13 +19,12 @@ import java.sql.SQLException;
 
 @Service
 public class JdbcObservableTemplate extends JdbcTemplate {
-
-   @Autowired
+    @Autowired
     public JdbcObservableTemplate(DataSource dataSource) {
         super(dataSource);
     }
 
-    private static class ObservableResultSetMapper<T> extends RowCountCallbackHandler{
+    private static class ObservableResultSetMapper<T> extends RowCountCallbackHandler {
 
         private final ObservableEmitter<T> emitter;
         private final RowMapper<T> rowMapper;
@@ -46,10 +45,8 @@ public class JdbcObservableTemplate extends JdbcTemplate {
                 emitter.onError(e);
             }
         }
-     }
-
-    public <T> Observable<T> queryForObservable(String sql, Object[] args, RowMapper<T> rowMapper) throws DataAccessException {
+    }
+    public <T> Observable<T> queryForObservable(String sql, Object[] args, final RowMapper<T> rowMapper) throws DataAccessException {
         return Observable.create(emitter -> query(sql, args, new ObservableResultSetMapper<>(emitter, rowMapper)));
     }
-
 }

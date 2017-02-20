@@ -15,3 +15,6 @@ VALUES ('Eistee', 1);
 
 INSERT INTO Product (name, supplierId)
 VALUES ('Kekse', 2);
+
+INSERT INTO Product (name, supplierId)
+VALUES ('Kebap', 1);

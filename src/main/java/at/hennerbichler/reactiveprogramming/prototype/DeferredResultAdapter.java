@@ -13,8 +13,7 @@ public class DeferredResultAdapter<T> extends DeferredResult<T> {
 
     public DeferredResultAdapter(Single<T> observable, long timeout) {
         super(timeout);
-        observable.subscribe(this::setResult,
-                this::setErrorResult);
+        observable.subscribe(this::setResult, this::setErrorResult);
     }
 
 

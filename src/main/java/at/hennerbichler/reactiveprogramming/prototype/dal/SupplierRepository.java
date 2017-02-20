@@ -31,6 +31,7 @@ public class SupplierRepository {
     }
 
     public Observable<Supplier> findForProduct(String productName) {
+
         return jdbcTemplate.queryForObservable("SELECT Supplier.id, Supplier.name, inventoryApi FROM Supplier " +
                             "INNER JOIN Product ON Product.supplierId = Supplier.id " +
                             "WHERE Product.name LIKE ?", new Object[]{ "%" + productName + "%"}, supplierMapper);

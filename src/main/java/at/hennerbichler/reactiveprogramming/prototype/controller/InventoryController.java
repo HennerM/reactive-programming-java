@@ -23,11 +23,11 @@ public class InventoryController {
 //        }
         switch (supplierName) {
             case "acme":
-                result = new Inventory[]{new Inventory("Schnitzel", 2), new Inventory("Kebap", 1)};
+                result = new Inventory[]{new Inventory("Schnitzel", 1), new Inventory("Kebap", 1)};
                 break;
 
             case "hofwirt":
-                result = new Inventory[]{new Inventory("Schnitzel", 1), new Inventory("Kebap", 0)};
+                result = new Inventory[]{new Inventory("Schnitzel", 2), new Inventory("Kebap", 0)};
                 break;
 
             default:
