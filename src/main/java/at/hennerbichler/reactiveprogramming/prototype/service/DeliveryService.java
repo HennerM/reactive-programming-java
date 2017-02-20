@@ -21,12 +21,12 @@ import java.util.List;
 public class DeliveryService {
 
     public Observable<DeliveryOrder> requestDelivery(Observable<InventoryResponse> inventoryResponses) {
-        DeliveryRestService deliveryRestService = buildDeliveryService();
 
+        DeliveryRestService deliveryRestService = buildDeliveryService();
         return inventoryResponses.groupBy(InventoryResponse::getSupplier)
-                .map(orderGroup -> {
-                    DeliveryRequest deliveryRequest = new DeliveryRequest(orderGroup.getKey(), new ArrayList<>());
-                    return orderGroup.reduce(deliveryRequest, (DeliveryRequest acc, InventoryResponse current) -> {
+                .map(supplierGroup -> {
+                    DeliveryRequest deliveryRequest = new DeliveryRequest(supplierGroup.getKey(), new ArrayList<>());
+                    return supplierGroup.reduce(deliveryRequest, (DeliveryRequest acc, InventoryResponse current) -> {
                         String product = current.getOrderRequestItem().getProduct();
                         int amount = current.getOrderRequestItem().getAmount();
                         acc.articles.add(new Article(current.getSupplier(), product, amount));

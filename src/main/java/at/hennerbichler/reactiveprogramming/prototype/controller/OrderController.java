@@ -34,16 +34,22 @@ public class OrderController {
         this.deliveryService = deliveryService;
     }
 
-
-
     @RequestMapping(value = "/", method = RequestMethod.POST)
-    public DeferredResult<ResponseEntity<List<DeliveryOrder>>> get(@RequestBody OrderRequest orderRequest) {
-        Observable<OrderRequestItem> orderRequests = Observable.fromIterable(orderRequest.getItems()).observeOn(Schedulers.io());
-        Observable<InventoryResponse> inventoryResponses = orderRequests.flatMap(orderRequestItem -> {
-            return inventoryChecker.checkSupplierInStock(orderRequestItem);
-        }).filter(InventoryResponse::isAvailable);
+    public DeferredResult<ResponseEntity<List<DeliveryOrder>>> makeOrder(@RequestBody OrderRequest orderRequest) {
+
+        Observable<OrderRequestItem> orderRequests = Observable.fromIterable(orderRequest.getItems()).subscribeOn(Schedulers.io());
+
+        Observable<InventoryResponse> inventoryResponses = orderRequests
+                .flatMap(orderRequestItem -> inventoryChecker.checkSupplierInStock(orderRequestItem))
+                .filter(InventoryResponse::isAvailable);
+
+
         Observable<DeliveryOrder> deliveryOrders = deliveryService.requestDelivery(inventoryResponses);
         return new DeferredResultAdapter<>(deliveryOrders.toList().map(value -> new ResponseEntity<>(value, HttpStatus.OK)));
+
+
+//        return new DeferredResultAdapter<>(inventoryResponses.toList().map(value -> new ResponseEntity<>(value, HttpStatus.OK)));
+
     }
 
 }

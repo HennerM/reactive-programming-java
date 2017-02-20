@@ -30,23 +30,24 @@ public class InventoryChecker {
     }
 
     public Observable<InventoryResponse> checkSupplierInStock(OrderRequestItem orderRequestItem) {
+
         Observable<Supplier> suppliers = this.supplierRepository.findForProduct(orderRequestItem.getProduct());
-        Observable<OrderRequestItem> oriObservable = Observable.just(orderRequestItem);
 
         return suppliers
-                .withLatestFrom(oriObservable, ImmutablePair::new)
+                .withLatestFrom(Observable.just(orderRequestItem), ImmutablePair::new)
                 .flatMap(requestPair -> checkInventoryFor(requestPair.getRight(), requestPair.getLeft()).toObservable());
     }
 
     private Single<InventoryResponse> checkInventoryFor(OrderRequestItem orderRequestItem, Supplier supplier) {
+
         InventoryResponse inventoryResponse = new InventoryResponse(supplier, orderRequestItem, false);
-
         SupplierRestService supplierService = buildSupplierService(supplier.getInventoryApi());
-        Single<Boolean> availableObservable = productIsAvailable(supplierService.getInventory().subscribeOn(Schedulers.io()), orderRequestItem);
 
-        return Single.zip(Single.just(inventoryResponse), availableObservable, (invResponse, available) -> {
-            return new InventoryResponse(invResponse.getSupplier(), invResponse.getOrderRequestItem(), available);
-        });
+        Observable<List<Inventory>> inventoryList = supplierService.getInventory().subscribeOn(Schedulers.io());
+        Single<Boolean> availableObservable = productIsAvailable(inventoryList, orderRequestItem);
+
+        return Single.zip(Single.just(inventoryResponse), availableObservable,
+                (invResponse, available) -> new InventoryResponse(invResponse.getSupplier(), invResponse.getOrderRequestItem(), available));
 
     }
 
