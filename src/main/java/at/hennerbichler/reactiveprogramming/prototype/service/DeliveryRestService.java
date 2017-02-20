@@ -16,5 +16,5 @@ public interface DeliveryRestService {
     String DELIVERY_SERVICE_URL = "http://localhost:8080/delivery/";
 
     @POST("order")
-    Single<DeliveryOrder> doDeliveryOrder(@Body DeliveryRequest deliveryRequest);
+    Observable<DeliveryOrder> doDeliveryOrder(@Body DeliveryRequest deliveryRequest);
 }

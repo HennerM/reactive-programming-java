@@ -32,6 +32,7 @@ dependencies {
     compile 'com.squareup.retrofit2:converter-jackson:2.1.0'
     compile 'org.apache.commons:commons-lang3:3.5'
     compile 'io.reactivex.rxjava2:rxandroid:2.0.1'
+    compile 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.8.6'
 
 
     // Declare the dependency for your favourite test framework you want to use in your tests.

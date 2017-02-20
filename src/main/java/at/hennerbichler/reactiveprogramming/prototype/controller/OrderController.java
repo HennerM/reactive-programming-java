@@ -46,10 +46,6 @@ public class OrderController {
 
         Observable<DeliveryOrder> deliveryOrders = deliveryService.requestDelivery(inventoryResponses);
         return new DeferredResultAdapter<>(deliveryOrders.toList().map(value -> new ResponseEntity<>(value, HttpStatus.OK)));
-
-
-//        return new DeferredResultAdapter<>(inventoryResponses.toList().map(value -> new ResponseEntity<>(value, HttpStatus.OK)));
-
     }
 
 }

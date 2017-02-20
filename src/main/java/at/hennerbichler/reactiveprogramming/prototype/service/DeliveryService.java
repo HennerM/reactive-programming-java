@@ -7,6 +7,7 @@ import at.hennerbichler.reactiveprogramming.prototype.domain.InventoryResponse;
 import com.jakewharton.retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import io.reactivex.Observable;
 import io.reactivex.Single;
+import io.reactivex.schedulers.Schedulers;
 import org.springframework.stereotype.Service;
 import retrofit2.Retrofit;
 import retrofit2.converter.jackson.JacksonConverterFactory;
@@ -34,7 +35,7 @@ public class DeliveryService {
                     });
                 })
                 .flatMap(Single::toObservable)
-                .flatMap(deliveryRequest -> deliveryRestService.doDeliveryOrder(deliveryRequest).toObservable());
+                .flatMap(deliveryRequest -> deliveryRestService.doDeliveryOrder(deliveryRequest).subscribeOn(Schedulers.io()));
     }
 
     private DeliveryRestService buildDeliveryService() {
