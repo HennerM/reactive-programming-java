@@ -30,9 +30,7 @@ public class InventoryChecker {
     }
 
     public Observable<InventoryResponse> checkSupplierInStock(OrderRequestItem orderRequestItem) {
-
         Observable<Supplier> suppliers = this.supplierRepository.findForProduct(orderRequestItem.getProduct());
-
         return suppliers
                 .withLatestFrom(Observable.just(orderRequestItem), ImmutablePair::new)
                 .flatMap(requestPair -> checkInventoryFor(requestPair.getRight(), requestPair.getLeft()).toObservable());
@@ -47,7 +45,8 @@ public class InventoryChecker {
         Single<Boolean> availableObservable = productIsAvailable(inventoryList, orderRequestItem);
 
         return Single.zip(Single.just(inventoryResponse), availableObservable,
-                (invResponse, available) -> new InventoryResponse(invResponse.getSupplier(), invResponse.getOrderRequestItem(), available));
+                (invResponse, available) -> new InventoryResponse(invResponse.getSupplier(),
+                        invResponse.getOrderRequestItem(), available));
 
     }
 
