@@ -46,7 +46,12 @@ public class JdbcObservableTemplate extends JdbcTemplate {
             }
         }
     }
-    public <T> Observable<T> queryForObservable(String sql, Object[] args, final RowMapper<T> rowMapper) throws DataAccessException {
-        return Observable.create(emitter -> query(sql, args, new ObservableResultSetMapper<>(emitter, rowMapper)));
+    public <T> Observable<T> queryForObservable(String sql,
+                                                Object[] args,
+                                                final RowMapper<T> rowMapper)
+            throws DataAccessException {
+        return Observable.create(emitter -> {
+            query(sql, args, new ObservableResultSetMapper<>(emitter, rowMapper));
+        });
     }
 }
